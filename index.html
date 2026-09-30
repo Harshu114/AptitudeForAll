@@ -9,6 +9,10 @@
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:#333;line-height:1.5}
   header{background:var(--primary);color:#fff;padding:1rem 2rem;text-align:center}
+  .viewer{display:none;max-width:960px;margin:1rem auto;padding:0 1rem}
+  .viewer.open{display:block}
+  .viewer iframe{width:100%;height:80vh;border:none;background:#fff}
+  .viewer-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem}
   main{max-width:960px;margin:2rem auto;padding:0 1rem}
   .category{background:var(--card);border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,.08);margin-bottom:1.5rem;overflow:hidden}
   .cat-header{background:var(--accent);color:#fff;padding:1rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
@@ -18,8 +22,8 @@
   .pdf-list.open{display:block}
   .pdf-item{display:flex;justify-content:space-between;align-items:center;padding:.6rem 0;border-bottom:1px solid #eee}
   .pdf-item:last-child{border:none}
-  .pdf-item a{color:var(--accent);text-decoration:none;font-weight:500}
-  .pdf-item a:hover{text-decoration:underline}
+  .pdf-title{color:var(--accent);text-decoration:none;font-weight:500;cursor:pointer}
+  .pdf-title:hover{text-decoration:underline}
   .chk{margin-left:1rem}
   .overall{background:var(--card);border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,.08);padding:1.5rem;text-align:center}
   .bar{height:12px;background:#e0e0e0;border-radius:6px;overflow:hidden;margin-top:.5rem}
@@ -29,6 +33,13 @@
 </head>
 <body>
 <header><h1>AptitudeForAll</h1><p class="small">Quiz PDF Dashboard – track your progress</p></header>
+<div class="viewer" id="viewer">
+  <div class="viewer-header">
+    <h2 id="viewerTitle"></h2>
+    <button onclick="closeViewer()" style="background:var(--accent);color:#fff;border:none;padding:.3rem .6rem;border-radius:4px;cursor:pointer">Close</button>
+  </div>
+  <iframe id="viewerFrame" src=""></iframe>
+</div>
 <main id="app"></main>
 <div class="overall">
   <h2>Overall Progress</h2>
@@ -176,6 +187,17 @@ function toggleDone(key){
   const p=loadProgress(); p[key]=!p[key]; saveProgress(p); render()
 }
 
+// ---------- VIEWER ----------
+function showViewer(path, title){
+  document.getElementById('viewerFrame').src = path + '#toolbar=0';
+  document.getElementById('viewerTitle').textContent = title;
+  document.getElementById('viewer').classList.add('open');
+}
+function closeViewer(){
+  document.getElementById('viewerFrame').src = '';
+  document.getElementById('viewer').classList.remove('open');
+}
+
 // ---------- RENDER ----------
 function render(){
   const prog=loadProgress();
@@ -188,8 +210,9 @@ function render(){
       const key=cat+'|'+f;
       if(prog[key]) catDone++;
       total++; if(prog[key]) done++;
+      const name = f.split('/').pop();
       return `<div class="pdf-item">
-        <a href="${f}" target="_blank">${f.split('/').pop()}</a>
+        <span class="pdf-title" onclick="showViewer('${f}','${name.replace(/'/g,"\\'")}')">${name}</span>
         <label><input type="checkbox" class="chk" ${prog[key]?'checked':''} onchange="toggleDone('${key}')"> Done</label>
       </div>`;
     }).join('');
