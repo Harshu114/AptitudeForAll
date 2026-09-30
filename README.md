@@ -5,7 +5,7 @@ A static, client‑side dashboard to browse all aptitude‑quiz PDFs, mark them 
 ## 🌐 Live Demo
 Once GitHub Pages is enabled, the site will be available at:
 
-**https://harshu114.github.io/AptitudeForAll/**
+[**https://harshu114.github.io/AptitudeForAll/**](https://harshu114.github.io/AptitudeForAll/)
 
 *(Replace the URL if you publish under a different username / repository name.)*
 
